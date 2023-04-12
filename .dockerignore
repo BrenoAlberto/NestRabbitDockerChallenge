@@ -1,0 +1,8 @@
+node_modules
+dist
+.git
+.env
+docker.env
+.mongo_data
+.rabbitmq_data
+.vscode

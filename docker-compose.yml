@@ -1,0 +1,56 @@
+version: "3"
+
+services:
+
+  main:
+    container_name: payever-challenge-main
+    build:
+      context: .
+      target: development
+    command: npm run start:dev
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - 3000:3000
+    depends_on: 
+      - rabbitmq
+      - mongo
+    networks:
+      - webnet
+
+  rabbitmq:
+    image: "rabbitmq:3.8-management-alpine"
+    container_name: payever-challenge-rabbitmq
+    hostname: rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    volumes:
+      - "./.rabbitmq_data:/var/lib/rabbitmq/mnesia"
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    networks:
+      - webnet
+
+  mongo:
+    image: mongo:4.4
+    command: mongod --port 27018
+    ports:
+      - '27018:27018'
+    container_name: payever-challenge-mongo
+    environment:
+        - MONGO_INITDB_ROOT_USERNAME=admin
+        - MONGO_INITDB_ROOT_PASSWORD=admin
+    volumes:
+      - ./.mongo_data:/data/db
+    networks:
+      - webnet
+
+networks:
+  webnet:
+
+volumes:
+  rabbitmq_data:
+  mongo_data:
